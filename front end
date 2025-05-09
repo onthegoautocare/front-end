@@ -1,0 +1,120 @@
+
+---
+
+### pubspec.yaml
+```yaml
+name: onthego_autocare
+description: OnTheGo AutoCare booking front-end (Flutter + PWA)
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+  flutter: '>=3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/lang/en.json
+    - assets/lang/fr.json
+
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Locale _locale = Locale('en');
+  Map<String, dynamic> _t = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTranslations();
+  }
+
+  Future<void> _loadTranslations() async {
+    final raw = await rootBundle
+        .loadString('assets/lang/${_locale.languageCode}.json');
+    setState(() => _t = json.decode(raw));
+  }
+
+  void _switchLang() {
+    setState(() {
+      _locale =
+          _locale.languageCode == 'en' ? Locale('fr') : Locale('en');
+      _loadTranslations();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: _t['app_title'] ?? '',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text(_t['app_title'] ?? ''),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.language),
+              onPressed: _switchLang,
+            )
+          ],
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(_t['greeting'] ?? '',
+                  style: TextStyle(fontSize: 24)),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // TODO: Navigate to booking page
+                },
+                child: Text(_t['book_button'] ?? ''),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+{
+  "name": "OnTheGo AutoCare",
+  "short_name": "AutoCare",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1976D2",
+  "icons": [
+    {
+      "src": "icons/Icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/Icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
